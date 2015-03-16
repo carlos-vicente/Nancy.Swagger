@@ -108,6 +108,10 @@ namespace Nancy.Swagger
             parameter.ParamType = parameterData.ParamType;
             parameter.Description = parameterData.Description;
             parameter.DefaultValue = parameterData.DefaultValue;
+            parameter.Format = parameterData.Format;
+            parameter.Maximum = parameterData.Maximum;
+            parameter.Minimum = parameterData.Minimum;
+            parameter.Enum = parameterData.Enum;
 
             var paramType = parameter.ParamType;
 
@@ -118,13 +122,20 @@ namespace Nancy.Swagger
             }
             else
             {
-                parameter.Required = parameterData.Required || parameterData.ParameterModel.IsImplicitlyRequired() ? true : (bool?)null;
+                parameter.Required =
+                    parameterData.Required || parameterData.ParameterModel.IsImplicitlyRequired()
+                        ? true
+                        : (bool?)null;
             }
 
             // 5.2.4 Parameter Object: The field may be used only if paramType is "query", "header" or "path".
-            if (paramType == ParameterType.Query || paramType == ParameterType.Header || paramType == ParameterType.Path)
+            if (paramType == ParameterType.Query 
+                || paramType == ParameterType.Header 
+                || paramType == ParameterType.Path)
             {
-                parameter.AllowMultiple = parameterData.ParameterModel.IsContainer() ? true : (bool?)null;
+                parameter.AllowMultiple = parameterData.ParameterModel.IsContainer()
+                    ? true
+                    : (bool?)null;
             }
 
             // 5.2.4 Parameter Object: If paramType is "body", the name is used only for 
@@ -146,6 +157,8 @@ namespace Nancy.Swagger
                 parameter.Type = parameter.Type ?? parameter.Ref;
                 parameter.Ref = null;
             }
+
+
 
             return parameter;
         }

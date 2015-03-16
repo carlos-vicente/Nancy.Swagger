@@ -1,20 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Nancy.Swagger
 {
     [SwaggerApi]
-    public class SwaggerModelPropertyData
+    public class SwaggerModelPropertyData : SwaggerDataType
     {
         public object DefaultValue { get; set; }
 
         public string Description { get; set; }
-
-        public IEnumerable<string> Enum { get; set; }
-
-        public long? Maximum { get; set; }
-
-        public long? Minimum { get; set; }
 
         public string Name { get; set; }
 

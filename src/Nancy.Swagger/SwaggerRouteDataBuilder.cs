@@ -1,4 +1,6 @@
-﻿using Nancy.Responses.Negotiation;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Nancy.Responses.Negotiation;
 using Swagger.ObjectModel.ApiDeclaration;
 using System;
 
@@ -86,14 +88,22 @@ namespace Nancy.Swagger
         /// <param name="description">The description of the parameter.</param>
         /// <param name="required">A <see cref="Boolean"/> value indicating whether the parameter is required. The default is <c>false</c>.</param>
         /// <param name="defaultValue">The default value to be used for the field.</param>
+        /// <param name="format">Fine-tuned primitive type definition</param>
+        /// <param name="maximum">The minimum valid value for the type, inclusive</param>
+        /// <param name="minimum">The maximum valid value for the type, inclusive. If this field is used in conjunction with the defaultValue field, then the default value MUST be lower than or equal to this value</param>
+        /// <param name="options">A fixed list of possible values</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
         public SwaggerRouteDataBuilder QueryParam<T>(
             string name,
             string description = null,
             bool required = false,
-            T defaultValue = default(T))
+            T defaultValue = default(T),
+            string format = null,
+            long? maximum = null,
+            long? minimum = null,
+            IEnumerable<T> options = null)
         {
-            return Param(ParameterType.Query, name, description, required, defaultValue);
+            return Param(ParameterType.Query, name, description, required, defaultValue, format, maximum, minimum, options);
         }
 
         /// <summary>
@@ -102,13 +112,21 @@ namespace Nancy.Swagger
         /// <param name="description">The description of the parameter.</param>
         /// <param name="required">A <see cref="Boolean"/> value indicating whether the parameter is required. The default is <c>false</c>.</param>
         /// <param name="defaultValue">The default value to be used for the field.</param>
+        /// <param name="format">Fine-tuned primitive type definition</param>
+        /// <param name="maximum">The minimum valid value for the type, inclusive</param>
+        /// <param name="minimum">The maximum valid value for the type, inclusive. If this field is used in conjunction with the defaultValue field, then the default value MUST be lower than or equal to this value</param>
+        /// <param name="options">A fixed list of possible values</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
         public SwaggerRouteDataBuilder BodyParam<T>(
             string description = null,
             bool required = false,
-            T defaultValue = default(T))
+            T defaultValue = default(T),
+            string format = null,
+            long? maximum = null,
+            long? minimum = null,
+            IEnumerable<T> options = null)
         {
-            return Param(ParameterType.Body, "body", description, required, defaultValue);
+            return Param(ParameterType.Body, "body", description, required, defaultValue, format, maximum, minimum, options);
         }
 
         /// <summary>
@@ -118,14 +136,22 @@ namespace Nancy.Swagger
         /// <param name="description">The description of the parameter.</param>
         /// <param name="required">A <see cref="Boolean"/> value indicating whether the parameter is required. The default is <c>false</c>.</param>
         /// <param name="defaultValue">The default value to be used for the field.</param>
+        /// <param name="format">Fine-tuned primitive type definition</param>
+        /// <param name="maximum">The minimum valid value for the type, inclusive</param>
+        /// <param name="minimum">The maximum valid value for the type, inclusive. If this field is used in conjunction with the defaultValue field, then the default value MUST be lower than or equal to this value</param>
+        /// <param name="options">A fixed list of possible values</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
         public SwaggerRouteDataBuilder PathParam<T>(
             string name,
             string description = null,
             bool required = false,
-            T defaultValue = default(T))
+            T defaultValue = default(T),
+            string format = null,
+            long? maximum = null,
+            long? minimum = null,
+            IEnumerable<T> options = null)
         {
-            return Param(ParameterType.Path, name, description, required, defaultValue);
+            return Param(ParameterType.Path, name, description, required, defaultValue, format, maximum, minimum, options);
         }
 
         /// <summary>
@@ -136,13 +162,21 @@ namespace Nancy.Swagger
         /// <param name="description">The description of the parameter.</param>
         /// <param name="required">A <see cref="Boolean"/> value indicating whether the parameter is required. The default is <c>false</c>.</param>
         /// <param name="defaultValue">The default value to be used for the field.</param>
+        /// <param name="format">Fine-tuned primitive type definition</param>
+        /// <param name="maximum">The minimum valid value for the type, inclusive</param>
+        /// <param name="minimum">The maximum valid value for the type, inclusive. If this field is used in conjunction with the defaultValue field, then the default value MUST be lower than or equal to this value</param>
+        /// <param name="options">A fixed list of possible values</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
         public SwaggerRouteDataBuilder Param<T>(
             ParameterType paramType,
             string name,
             string description = null,
             bool required = false,
-            T defaultValue = default(T))
+            T defaultValue = default(T),
+            string format = null,
+            long? maximum = null,
+            long? minimum = null,
+            IEnumerable<T> options = null)
         {
             var param = new SwaggerParameterData
             {
@@ -151,7 +185,11 @@ namespace Nancy.Swagger
                 Description = description,
                 Required = required,
                 DefaultValue = defaultValue,
-                ParameterModel = typeof(T)
+                ParameterModel = typeof(T),
+                Format = format,
+                Maximum = maximum,
+                Minimum = minimum,
+                Enum = options != null ? options.Select(o => o.ToString()) : null
             };
 
             Data.OperationParameters.Add(param);
@@ -164,14 +202,20 @@ namespace Nancy.Swagger
         /// </summary>
         /// <param name="code">The HTTP code of the response.</param>
         /// <param name="message">The message for the response.</param>
+        /// <param name="responseModel">The return type for the given response</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
-        public SwaggerRouteDataBuilder Response(int code, string message = null)
+        public SwaggerRouteDataBuilder Response(int code, string message = null, Type responseModel = null)
         {
             message = message ?? Enum.GetName(typeof (HttpStatusCode), code);
 
-            var responseMessage = new ResponseMessage { Code = code, Message = message };
-
-            // TODO: Populate responseModel
+            var responseMessage = new ResponseMessage
+            {
+                Code = code,
+                Message = message,
+                ResponseModel = responseModel != null
+                    ? responseModel.ToString()
+                    : null
+            };
 
             Data.OperationResponseMessages.Add(responseMessage);
 

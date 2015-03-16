@@ -4,7 +4,7 @@ using Swagger.ObjectModel.ApiDeclaration;
 namespace Nancy.Swagger
 {
     [SwaggerApi]
-    public class SwaggerParameterData
+    public class SwaggerParameterData : SwaggerDataType
     {
         public string Name { get; set; }
 

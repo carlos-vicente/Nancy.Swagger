@@ -58,6 +58,7 @@
     <Compile Include="Modules\SwaggerModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwaggerApiAttribute.cs" />
+    <Compile Include="SwaggerDataType.cs" />
     <Compile Include="SwaggerModelDataBuilder.cs" />
     <Compile Include="SwaggerModelPropertyDataBuilder.cs" />
     <Compile Include="SwaggerRegistrations.cs" />
