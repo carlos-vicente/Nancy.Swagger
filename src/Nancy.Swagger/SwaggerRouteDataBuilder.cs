@@ -202,20 +202,14 @@ namespace Nancy.Swagger
         /// </summary>
         /// <param name="code">The HTTP code of the response.</param>
         /// <param name="message">The message for the response.</param>
-        /// <param name="responseModel">The return type for the given response</param>
         /// <returns>The <see cref="SwaggerRouteDataBuilder"/> instance.</returns>
-        public SwaggerRouteDataBuilder Response(int code, string message = null, Type responseModel = null)
+        public SwaggerRouteDataBuilder Response(int code, string message = null)
         {
             message = message ?? Enum.GetName(typeof (HttpStatusCode), code);
 
-            var responseMessage = new ResponseMessage
-            {
-                Code = code,
-                Message = message,
-                ResponseModel = responseModel != null
-                    ? responseModel.ToString()
-                    : null
-            };
+            var responseMessage = new ResponseMessage { Code = code, Message = message };
+
+            // TODO: Populate responseModel
 
             Data.OperationResponseMessages.Add(responseMessage);
 
